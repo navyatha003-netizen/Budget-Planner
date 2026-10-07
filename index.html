@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BloomBudget — Interactive Finance Manager</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+</div>
+<div id="bg"><div class="bg-orb orb-a"></div><div class="bg-orb orb-b"></div><div class="bg-orb orb-c"></div><div class="aurora"></div><div class="bg-stars"></div></div>
+
+<!-- LANDING -->
+<section id="landing" class="screen active">
+  <div class="landing-card glass">
+    <div class="logo">◈ BloomBudget</div>
+    <p class="eyebrow">SMART PERSONAL FINANCE SYSTEM</p>
+    <h1>Control your money.<br><span>Understand your future.</span></h1>
+    <p class="lead">A fully local budget planner with interactive analytics, goals, alerts and separate administration controls.</p>
+    <div class="portal-grid">
+      <button class="portal user-portal" onclick="showScreen('userLogin')"><span>◉</span><b>User Portal</b><small>Track income, expenses & goals</small></button>
+      <button class="portal admin-portal" onclick="showScreen('adminLogin')"><span>◆</span><b>Admin Portal</b><small>Manage users & system analytics</small></button>
+    </div>
+  </div>
+</section>
+
+<!-- USER LOGIN -->
+<section id="userLogin" class="screen">
+  <div class="auth-card glass">
+    <button class="back" onclick="showScreen('landing')">← Back</button>
+    <div class="auth-icon">◉</div><h2>User Login</h2><p>Access your personal financial dashboard.</p>
+    <form id="userLoginForm">
+      <label>Username or Email<input id="userLoginId" required placeholder="Enter username"></label>
+      <label>Password<input id="userLoginPass" type="password" required placeholder="Enter password"></label>
+      <button class="primary full">Enter User Dashboard</button>
+    </form>
+    <button class="text-btn" onclick="showScreen('userSignup')">New here? Create an account</button>
+    <div class="hint">Your financial data is stored locally in this browser.</div>
+  </div>
+</section>
+
+<!-- USER SIGNUP -->
+<section id="userSignup" class="screen">
+  <div class="auth-card glass">
+    <button class="back" onclick="enterTestMode('user')">← Back</button>
+    <div class="auth-icon">+</div><h2>Create User Account</h2><p>Start your personal finance workspace.</p>
+    <form id="signupForm" class="form-grid">
+      <label>Full Name<input id="suName" required></label>
+      <label>Username<input id="suUser" required></label>
+      <label class="full">Email<input id="suEmail" type="email" required></label>
+      <label>Password<input id="suPass" type="password" minlength="6" required></label>
+      <label>Confirm Password<input id="suConfirm" type="password" required></label>
+      <button class="primary full">Create Account</button>
+    </form>
+  </div>
+</section>
+
+<!-- ADMIN LOGIN -->
+<section id="adminLogin" class="screen">
+  <div class="auth-card glass admin-auth">
+    <button class="back" onclick="showScreen('landing')">← Back</button>
+    <div class="auth-icon admin-icon">◆</div><h2>Admin Control Center</h2><p>Restricted system administration access.</p>
+    <form id="adminLoginForm">
+      <label>Admin Username<input id="adminUser" required placeholder="Must contain admin"></label>
+      <label>Admin Password<input id="adminPass" type="password" required placeholder="Password must contain admin"></label>
+      <button class="primary full">Enter Admin Center</button>
+    </form>
+    <div class="hint">For this SDC demonstration, both username and password must contain <b>admin</b>. The password remains hidden while typing.</div>
+  </div>
+</section>
+
+<!-- APP -->
+<section id="app" class="app hidden">
+  <aside class="sidebar">
+    <div class="brand">◈<span>BloomBudget</span></div>
+    <div class="profile-mini"><div id="sideAvatar">B</div><div><b id="sideName">User</b><small id="sideRole">User</small></div></div>
+    <nav id="userNav">
+      <button data-page="dashboard" onclick="navigate('dashboard')">⌂ <span>Dashboard</span></button>
+      <button data-page="transactions" onclick="navigate('transactions')">↔ <span>Transactions</span></button>
+      <button data-page="budget" onclick="navigate('budget')">◇ <span>Budgets & Goals</span></button>
+      <button data-page="analytics" onclick="navigate('analytics')">◒ <span>Analytics</span></button>
+      <button data-page="planner" onclick="navigate('planner')">□ <span>Planner</span></button>
+      <button data-page="tools" onclick="navigate('tools')">∑ <span>Finance Tools</span></button>
+      <button data-page="moneyCenter" onclick="navigate('moneyCenter')">◈ <span>Money Center</span></button>
+      <button data-page="settings" onclick="navigate('settings')">⚙ <span>Settings</span></button>
+    </nav>
+    <nav id="adminNav" class="hidden">
+      <button data-page="adminDashboard" onclick="navigate('adminDashboard')">◆ <span>Admin Overview</span></button>
+      <button data-page="users" onclick="navigate('users')">♙ <span>User Management</span></button>
+      <button data-page="allTransactions" onclick="navigate('allTransactions')">↔ <span>All Transactions</span></button>
+      <button data-page="systemAnalytics" onclick="navigate('systemAnalytics')">◒ <span>System Analytics</span></button>
+      <button data-page="adminMonitor" onclick="navigate('adminMonitor')">◉ <span>System Monitor</span></button><button data-page="adminOperations" onclick="navigate('adminOperations')">⚙ <span>Operations</span></button>
+      <button data-page="adminOps" onclick="navigate('adminOps')">▣ <span>Operations Center</span></button>
+      <button data-page="adminSettings" onclick="navigate('adminSettings')">⚙ <span>Admin Settings</span></button>
+    </nav>
+    <button class="logout" onclick="logout()">↪ <span>Logout</span></button>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div>
+        <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+        <span class="crumb" id="crumb">Dashboard</span>
+      </div>
+      <div class="top-actions">
+        <div class="search"><span>⌕</span><input id="globalSearch" placeholder="Search..." oninput="globalSearch(this.value)"></div>
+        <!-- BULB THEME BUTTON -->
+        <button class="bulb" id="bulbBtn" title="Toggle light/dark mode" onclick="toggleTheme()">💡</button>
+        <div class="top-avatar" id="topAvatar">B</div>
+      </div>
+    </header>
+
+    <!-- USER DASHBOARD -->
+    <section id="dashboard" class="page">
+      <div class="hero"><div><p class="eyebrow">PERSONAL OVERVIEW</p><h1>Welcome, <span id="hello">there</span>.</h1><p id="today"></p></div><button class="primary" onclick="openModal('txModal')">+ Add Transaction</button></div>
+      <div id="userAnnouncements" class="panel announcement-strip" style="display:none"></div>
+      <div class="dashboard-command">
+        <div class="command-main">
+          <span class="command-icon">✦</span>
+          <div><b>Financial Command Center</b><small>Everything important is summarized here first. Detailed tools stay one click away.</small></div>
+        </div>
+        <div class="command-actions">
+          <button class="mini-btn" onclick="navigate('analytics')">View analytics</button>
+          <button class="mini-btn" onclick="navigate('budget')">Manage budgets</button>
+          <button class="primary compact" onclick="openModal('txModal')">+ Transaction</button>
+        </div>
+      </div>
+      <div class="floating-feature compact-features">
+        <div class="feature-card"><span class="feature-icon">⚡</span><b>Smart Money Pulse</b><small id="moneyPulse">Your financial activity is ready to analyze.</small></div>
+        <div class="feature-card"><span class="feature-icon">🎯</span><b>Goal Momentum</b><small id="goalMomentum">Set a goal and watch your progress accelerate.</small></div>
+        <div class="feature-card"><span class="feature-icon">🛡️</span><b>Budget Guard</b><small id="budgetGuard">Overspending alerts appear automatically from your budgets.</small></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><small>AVAILABLE BALANCE</small><strong id="dashBalance">₹0</strong><em id="balanceNote">Start tracking</em></div>
+        <div class="stat-card"><small>TOTAL INCOME</small><strong id="dashIncome">₹0</strong><em class="positive">Money received</em></div>
+        <div class="stat-card"><small>TOTAL EXPENSE</small><strong id="dashExpense">₹0</strong><em class="negative">Money spent</em></div>
+        <div class="stat-card"><small>FINANCIAL SCORE</small><strong id="dashScore">0/100</strong><em id="scoreNote">Build your score</em></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel chart-panel"><div class="panel-head"><div><h3>Spending Breakdown</h3><small>Hover slices to inspect categories</small></div><span class="live-dot">LIVE</span></div><canvas id="dashPie"></canvas></><div id="pieLegend" class="legend"></div></div>
+        <div class="panel chart-panel"><div class="panel-head"><div><h3>Income vs Expense</h3><small>Monthly comparison</small></div><select id="chartRange" onchange="renderDashboardCharts()" title="Choose how many recent months to compare">
+<option value="1">1 month</option><option value="2">2 months</option><option value="3">3 months</option><option value="4">4 months</option>
+<option value="5">5 months</option><option value="6" selected>6 months</option><option value="7">7 months</option><option value="8">8 months</option>
+<option value="9">9 months</option><option value="10">10 months</option><option value="11">11 months</option><option value="12">12 months</option>
+</select></div><canvas id="dashBar"></canvas></></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel"><div class="panel-head"><div><h3>Smart Insights</h3><small>How the system reaches these insights</small></div></div><div id="insights"></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Savings Goals</h3><small>Progress toward your targets</small></div><button class="mini-btn" onclick="openModal('goalModal')">+ Goal</button></div><div id="goalMini"></div></div>
+      </div>
+      <div class="panel"><div class="panel-head"><div><h3>Recent Activity</h3><small>Your latest financial actions</small></div><button class="mini-btn" onclick="navigate('transactions')">View all</button></div><div id="recent"></div></div>
+      <div class="dashboard-lower">
+        <div class="panel">
+          <div class="panel-head"><div><h3>Financial Health Snapshot</h3><small>Simple signals calculated from your local transaction history.</small></div><span class="live-dot">SMART</span></div>
+          <div id="healthSnapshot" class="health-grid"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><h3>Recurring Spend Watch</h3><small>Potential recurring categories detected from your transactions.</small></div></div>
+          <div id="recurringWatch"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRANSACTIONS -->
+    <section id="transactions" class="page">
+      <div class="hero"><div><p class="eyebrow">MONEY FLOW</p><h1>Transactions</h1><p>Record and understand every inflow and outflow.</p></div><button class="primary" onclick="openModal('txModal')">+ Add Transaction</button></div>
+      <div class="info-banner">ℹ <b>How it works:</b> Transactions are stored against your user ID in LocalStorage. Income increases balance; expenses reduce it. Filters below update instantly without reloading.</div>
+      <div class="panel filters"><input id="txSearch" placeholder="Search description..." oninput="renderTransactions()"><select id="txType" onchange="renderTransactions()"><option value="all">All types</option><option value="income">Income</option><option value="expense">Expense</option></select><select id="txCat" onchange="renderTransactions()"><option value="all">All categories</option></select><select id="txSort" onchange="renderTransactions()"><option value="new">Newest</option><option value="high">Highest amount</option><option value="low">Lowest amount</option></select></div>
+      <div class="panel table-panel"><table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Method</th><th>Type</th><th>Amount</th><th></th></tr></thead><tbody id="txRows"></tbody></table></div>
+    </section>
+
+    <!-- BUDGET -->
+    <section id="budget" class="page">
+      <div class="hero"><div><p class="eyebrow">PLAN AHEAD</p><h1>Budgets & Goals</h1><p>Set limits and turn plans into measurable progress.</p></div><div class="actions"><button class="primary" onclick="openModal('budgetModal')">+ Budget</button><button class="secondary" onclick="openModal('goalModal')">+ Goal</button></div></div>
+      <div class="grid-2"><div class="panel"><div class="panel-head"><div><h3>Monthly Budgets</h3><small>A budget compares category spending against your chosen limit.</small></div></div><div id="budgetList"></div></div><div class="panel"><div class="panel-head"><div><h3>Savings Goals</h3><small>Progress = current saved ÷ target × 100.</small></div></div><div id="goalList"></div></div></div>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section id="analytics" class="page">
+      <div class="hero"><div><p class="eyebrow">DECISION CENTER</p><h1>Interactive Analytics</h1><p>Hover, inspect and compare your financial patterns.</p></div></div>
+      <div class="stats-grid four"><div class="stat-card"><small>AVG DAILY SPEND</small><strong id="avgSpend">₹0</strong><em>Based on current month</em></div><div class="stat-card"><small>SAVINGS RATE</small><strong id="saveRate">0%</strong><em>Balance ÷ income</em></div><div class="stat-card"><small>TOP CATEGORY</small><strong id="topCategory">—</strong><em>Highest expense</em></div><div class="stat-card"><small>LARGEST EXPENSE</small><strong id="largest">₹0</strong><em>Single transaction</em></div></div>
+      <div class="grid-2"><div class="panel chart-panel tall"><div class="panel-head"><div><h3>Monthly Cash Flow</h3><small>Bars show income and expenses.</small></div></div></></div><div class="panel chart-panel tall"><div class="panel-head"><div><h3>Expense Categories</h3><small>Hover each segment for amount and percentage.</small></div></div></></div></div>
+      <div class="panel"><h3>Needs vs Wants</h3><div id="needsWants"></div></div>
+    </section>
+
+    <!-- PLANNER -->
+    <section id="planner" class="page">
+      <div class="hero"><div><p class="eyebrow">FINANCIAL PLANNER</p><h1>Upcoming Money</h1><p>Keep bills, subscriptions and loans in one place.</p></div></div>
+      <div class="grid-3" id="plannerCards"></div>
+      <div class="panel"><div class="panel-head"><div><h3>Financial Calendar</h3><small>Transactions and planned payments for the current month.</small></div></div><div id="calendar"></div></div>
+    </section>
+
+    <!-- TOOLS -->
+    <section id="tools" class="page">
+      <div class="hero"><div><p class="eyebrow">CALCULATORS</p><h1>Finance Tools</h1><p>Use these local calculators to demonstrate practical financial planning.</p></div></div>
+      <div class="grid-3">
+        <div class="panel tool"><h3>EMI Calculator</h3><p>Calculates monthly repayment from principal, annual rate and tenure.</p><label>Principal<input id="emiP" type="number" value="100000"></label><label>Annual Rate %<input id="emiR" type="number" value="8.5"></label><label>Months<input id="emiN" type="number" value="24"></label><button class="primary" onclick="calcEMI()">Calculate</button><div class="result" id="emiOut">₹0 / month</div></div>
+        <div class="panel tool"><h3>Compound Interest</h3><p>Shows how an amount grows when returns are reinvested.</p><label>Principal<input id="ciP" type="number" value="50000"></label><label>Rate %<input id="ciR" type="number" value="10"></label><label>Years<input id="ciN" type="number" value="5"></label><button class="primary" onclick="calcCI()">Calculate</button><div class="result" id="ciOut">₹0</div></div>
+        <div class="panel tool"><h3>Emergency Fund</h3><p>Recommended reserve = essential monthly expenses × target months.</p><label>Monthly essentials<input id="efP" type="number" value="20000"></label><label>Target months<input id="efN" type="number" value="6"></label><button class="primary" onclick="calcEF()">Calculate</button><div class="result" id="efOut">₹0</div></div><div class="panel tool"><h3>50 / 30 / 20 Planner</h3><p>Turn monthly income into needs, wants and savings targets.</p><label>Monthly income<input id="ruleIncome" type="number" value="50000"></label><button class="primary" onclick="calcRule()">Build Plan</button><div class="result" id="ruleOut">₹0 needs</div><small id="ruleDetails" class="muted">₹0 wants · ₹0 savings</small></div><div class="panel tool"><h3>Net Worth Snapshot</h3><p>Compare what you own with what you owe for a simple wealth snapshot.</p><label>Total assets<input id="assetP" type="number" value="100000"></label><label>Total liabilities<input id="debtP" type="number" value="25000"></label><button class="primary" onclick="calcNetWorth()">Calculate</button><div class="result" id="netOut">₹75,000</div></div>
+      </div>
+    </section>
+
+    <!-- MONEY CENTER -->
+    <section id="moneyCenter" class="page">
+      <div class="hero"><div><p class="eyebrow">ADVANCED MONEY CENTER</p><h1>Your Financial Life</h1><p>Track recurring commitments, debt, investments, income planning and financial alerts in one place.</p></div><div class="hero-badge">● PERSONAL</div></div>
+      <div class="stats-grid four" id="moneyCenterStats"></div>
+      <div class="money-grid">
+        <div class="panel"><div class="panel-head"><div><h3>Recurring Bills</h3><small>Never lose track of regular payments.</small></div><button class="mini-btn" onclick="addMoneyItem('bills')">+ Add</button></div><div id="billsList"></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Subscriptions</h3><small>See how much your recurring subscriptions cost.</small></div><button class="mini-btn" onclick="addMoneyItem('subs')">+ Add</button></div><div id="subsList"></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Debt Tracker</h3><small>Monitor outstanding balances and repayment progress.</small></div><button class="mini-btn" onclick="addMoneyItem('loans')">+ Add</button></div><div id="loansList"></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Investment Tracker</h3><small>Track assets without connecting a bank account.</small></div><button class="mini-btn" onclick="addMoneyItem('investments')">+ Add</button></div><div id="investmentsList"></div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel"><div class="panel-head"><div><h3>Monthly Financial Forecast</h3><small>Income minus known recurring commitments.</small></div></div><div id="forecastBox"></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Financial Alerts</h3><small>Rule-based warnings generated locally.</small></div></div><div id="alertsBox"></div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel"><div class="panel-head"><div><h3>Monthly Money Report</h3><small>Current month snapshot you can use in your project demo.</small></div><button class="mini-btn" onclick="downloadMonthlyReport()">Export</button></div><div id="monthlyReport"></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Income Planner</h3><small>Plan expected income streams before they arrive.</small></div><button class="mini-btn" onclick="addMoneyItem('incomePlans')">+ Add</button></div><div id="incomePlansList"></div></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    
+    <section id="smartCenter" class="page">
+      <div class="hero"><div><p class="eyebrow">SMART MONEY CENTER</p><h1>Financial Intelligence</h1><p>Turn your local transaction data into practical planning insights.</p></div><div class="hero-badge">✦ SMART</div></div>
+      <div class="stats-grid four" id="smartStats"></div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><div><h3>Financial Health Score</h3><small>A simple score based on savings, budget usage, goals and debt.</small></div><div id="healthScoreBadge" class="score-badge">—</div></div>
+          <div id="healthScoreDetails"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><h3>Budget Forecast</h3><small>Projected spending based on current monthly activity.</small></div></div>
+          <div id="budgetForecast"></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><div><h3>What-If Simulator</h3><small>Test how a spending change affects your savings.</small></div></div>
+          <div class="form-grid">
+            <label>Monthly expense reduction<input id="whatIfAmount" type="number" min="0" placeholder="2000"></label>
+            <label>Months<input id="whatIfMonths" type="number" min="1" max="120" value="12"></label>
+          </div>
+          <button class="primary" onclick="runWhatIf()">Simulate savings</button>
+          <div id="whatIfResult" class="result-box"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><h3>Can I Afford This?</h3><small>Compare a planned purchase with your current disposable balance.</small></div></div>
+          <div class="form-grid">
+            <label>Purchase amount<input id="affordAmount" type="number" min="0" placeholder="65000"></label>
+            <label>Purchase name<input id="affordName" placeholder="Laptop"></label>
+          </div>
+          <button class="primary" onclick="checkAfford()">Check affordability</button>
+          <div id="affordResult" class="result-box"></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><div><h3>Smart Alerts</h3><small>Automatic signals from your current data.</small></div></div>
+          <div id="smartAlerts"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><h3>Spending Patterns</h3><small>Categories and behavior worth reviewing.</small></div></div>
+          <div id="spendingPatterns"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><div><h3>Achievements & Savings Streak</h3><small>Small milestones make good financial habits visible.</small></div><span id="savingsStreak" class="pill">0-day streak</span></div>
+        <div id="achievements" class="achievement-grid"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><div><h3>50 / 30 / 20 Analyzer</h3><small>Compare your actual spending mix with the classic planning rule.</small></div></div>
+        <div id="rule503020"></div>
+      </div>
+    </section>
+
+    <section id="settings" class="page">
+      <div class="hero"><div><p class="eyebrow">PERSONALIZE</p><h1>Settings</h1><p>Customize your account and interface.</p></div></div>
+      <div class="grid-2"><div class="panel"><h3>Profile</h3><label>Name<input id="profileName"></label><label>Email<input id="profileEmail"></label><button class="primary" onclick="saveProfile()">Save Profile</button></div>
+      <div class="panel"><h3>Data Center</h3><p class="muted">Create a local backup or reset your personal finance records for a clean project demo.</p><div class="quick-row"><button class="primary" onclick="exportData()">Export Backup</button><button class="secondary" onclick="clearMyData()">Reset My Data</button></div></div><div class="panel"><h3>Interface</h3><div class="setting"><span><b>Theme</b><small>Use the bulb in the top bar to switch modes.</small></span><button class="mini-btn" onclick="toggleTheme()">💡 Toggle</button></div><div class="setting"><span><b>Accent color</b><small>Available to administrators.</small></span><span id="userAccentInfo">Controlled by system</span></div></div></div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="adminDashboard" class="page">
+      <div class="hero"><div><p class="eyebrow">ADMIN CONTROL CENTER</p><h1>Operations Overview</h1><p>Clean system-wide monitoring, user activity and financial health.</p></div><div class="hero-badge">● SYSTEM LIVE</div></div>
+      <div class="stats-grid four" id="adminStats"></div>
+      <div class="admin-command-grid">
+        <div class="panel admin-health-panel"><div class="panel-head"><div><h3>System Health</h3><small>LocalStorage application health checks.</small></div><span class="live-dot">LIVE</span></div><div id="adminHealth"></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Quick Controls</h3><small>Common administrator actions.</small></div></div><div class="admin-actions">
+          <button class="action-tile" onclick="navigate('users')"><b>👥 Users</b><small>Manage accounts</small></button>
+          <button class="action-tile" onclick="navigate('allTransactions')"><b>↔ Transactions</b><small>Review all activity</small></button>
+          <button class="action-tile" onclick="navigate('systemAnalytics')"><b>📊 Analytics</b><small>System trends</small></button>
+          <button class="action-tile" onclick="exportAllTransactions()">⬇ Export data</button>
+        </div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel chart-panel tall"><div class="panel-head"><div><h3>Income vs Expense</h3><small>System-wide financial activity.</small></div></div></></div>
+        <div class="panel"><div class="panel-head"><div><h3>System Information</h3><small>Live operational metrics.</small></div></div><div id="adminInfo"></div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel"><div class="panel-head"><div><h3>Top User Activity</h3><small>Accounts ranked by transaction volume.</small></div></div><div id="adminTopUsers"></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Recent System Events</h3><small>Latest transaction activity across users.</small></div></div><div id="adminRecent"></div></div>
+      </div>
+    </section>
+    <section id="users" class="page"><div class="hero"><div><p class="eyebrow">ADMIN</p><h1>User Management</h1><p>Block, unblock or remove local user accounts.</p></div></div><div class="panel table-panel"><table><thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody id="usersRows"></tbody></table></div></section>
+    <section id="allTransactions" class="page"><div class="hero"><div><p class="eyebrow">ADMIN</p><h1>All Transactions</h1><p>System-wide financial activity with quick search and export.</p></div><button class="primary" onclick="exportAllTransactions()">Export CSV</button></div>
+      <div class="panel filters"><input id="adminTxSearch" placeholder="Search user, description or category..." oninput="renderAllTransactions()"><select id="adminTxType" onchange="renderAllTransactions()"><option value="all">All types</option><option value="income">Income</option><option value="expense">Expense</option></select></div>
+      <div class="panel table-panel"><table><thead><tr><th>User</th><th>Date</th><th>Description</th><th>Category</th><th>Type</th><th>Amount</th></tr></thead><tbody id="allTxRows"></tbody></table></div></section>
+    <section id="systemAnalytics" class="page"><div class="hero"><div><p class="eyebrow">ADMIN</p><h1>System Analytics</h1><p>Aggregated financial activity across user accounts.</p></div></div><div class="grid-2"><div class="panel chart-panel tall"><h3>System Income vs Expense</h3></></div><div class="panel"><h3>Popular Categories</h3><div id="systemCats"></div></div></div></section>
+    <section id="adminMonitor" class="page">
+      <div class="hero"><div><p class="eyebrow">ADMIN</p><h1>System Monitor</h1><p>Extra operational checks for a realistic administrator workflow.</p></div></div>
+      <div class="stats-grid four" id="monitorStats"></div>
+      <div class="grid-2">
+        <div class="panel"><h3>Data Integrity</h3><div id="integrityList"></div></div>
+        <div class="panel"><h3>Category Demand</h3><div id="monitorCats"></div></div>
+      </div>
+    </section>
+    <section id="adminOps" class="page">
+      <div class="hero"><div><p class="eyebrow">ADMIN OPERATIONS</p><h1>Operations Center</h1><p>Manage the application like a real finance-platform administrator.</p></div><button class="primary" onclick="generateDemoData()">Generate Demo Data</button></div>
+      <div class="stats-grid four" id="opsStats"></div>
+      <div class="grid-2">
+        <div class="panel"><div class="panel-head"><div><h3>User Directory</h3><small>Search, inspect and manage accounts quickly.</small></div></div><input id="opsUserSearch" placeholder="Search name, username or email..." oninput="renderOpsUsers()"><div id="opsUsers"></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Admin Announcements</h3><small>Store a local notice for the demo dashboard.</small></div><button class="mini-btn" onclick="addAnnouncement()">+ Notice</button></div><div id="announcements"></div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel"><div class="panel-head"><div><h3>Audit Log</h3><small>Important local administrator actions.</small></div><button class="mini-btn" onclick="clearAuditLog()">Clear</button></div><div id="auditLog"></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Category Manager</h3><small>Add custom spending categories for the whole demo.</small></div><button class="mini-btn" onclick="addCategory()">+ Category</button></div><div id="categoryManager"></div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel"><h3>Data Operations</h3><div class="admin-actions"><button class="action-tile" onclick="exportSystemBackup()"><b>⬇ Full backup</b><small>Download complete local database</small></button><button class="action-tile" onclick="resetDemoData()"><b>↺ Reset demo data</b><small>Clear user-generated finance data</small></button></div></div>
+        <div class="panel"><h3>System Rules</h3><div id="systemRules"></div></div>
+      </div>
+    </section>
+    
+    <section id="adminOperations" class="page">
+      <div class="hero"><div><p class="eyebrow">ADMIN OPERATIONS</p><h1>Administration Center</h1><p>Audit activity, manage categories and publish system announcements.</p></div></div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><div><h3>Announcement Center</h3><small>Send a local announcement to the user dashboard.</small></div></div>
+          <label>Announcement title<input id="announcementTitle" placeholder="Monthly planning reminder"></label>
+          <label>Message<textarea id="announcementMessage" rows="3" placeholder="Review your budget before the new month starts."></textarea></label>
+          <button class="primary" onclick="publishAnnouncement()">Publish announcement</button>
+          <div id="announcementList"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><h3>Category Manager</h3><small>Create categories available to transactions.</small></div></div>
+          <div class="form-grid">
+            <label>Category name<input id="adminCategoryName" placeholder="Gaming"></label>
+            <label>Type<select id="adminCategoryType"><option value="expense">Expense</option><option value="income">Income</option></select></label>
+          </div>
+          <button class="primary" onclick="addAdminCategory()">Add category</button>
+          <div id="adminCategoryList"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><h3>Audit Log</h3><small>Recent administrative and system actions.</small></div><button class="mini-btn" onclick="clearAuditLog()">Clear log</button></div>
+        <div id="auditLog"></div>
+      </div>
+    </section>
+
+    <section id="adminSettings" class="page"><div class="hero"><div><p class="eyebrow">ADMIN ONLY</p><h1>Appearance & System</h1><p>Change the application accent without editing the code.</p></div></div>
+      <div class="grid-2"><div class="panel"><h3>Change Accent Color</h3><p class="muted">This setting changes the primary interactive color throughout the dashboard.</p><div class="swatches"><button style="--sw:#7c5cff" onclick="setAccent('#7c5cff')"></button><button style="--sw:#00c2a8" onclick="setAccent('#00c2a8')"></button><button style="--sw:#ff5c7a" onclick="setAccent('#ff5c7a')"></button><button style="--sw:#f0a43c" onclick="setAccent('#f0a43c')"></button><button style="--sw:#4aa3ff" onclick="setAccent('#4aa3ff')"></button><button style="--sw:#b36bff" onclick="setAccent('#b36bff')"></button></div><div class="custom-color"><label>Custom color<input id="customAccent" type="color" value="#7c5cff"></label><button class="primary" onclick="setAccent(customAccent.value)">Apply</button></div></div>
+      <div class="panel"><h3>Admin Authentication Rule</h3><div class="rule"><b>Username</b><span>Must contain <code>admin</code></span></div><div class="rule"><b>Password</b><span>Must contain <code>admin</code></span></div><p class="muted">The password input is type=password, so the value is hidden during login. This is a frontend demonstration rule, not production security.</p></div></div>
+    </section>
+  </main>
+</section>
+
+<!-- MODALS -->
+<div id="txModal" class="modal"><div class="modal-box"><div class="modal-head"><h2>Add Transaction</h2><button onclick="closeModal('txModal')">×</button></div><form id="txForm" class="form-grid"><label>Type<select id="mType"><option value="expense">Expense</option><option value="income">Income</option></select></label><label>Amount<input id="mAmount" type="number" min="0" required></label><label>Description<input id="mDesc" required></label><label>Category<select id="mCat"><option>Food</option><option>Rent</option><option>Transport</option><option>Education</option><option>Shopping</option><option>Entertainment</option><option>Healthcare</option><option>Utilities</option><option>Travel</option><option>Subscriptions</option><option>Investment</option><option>Salary</option><option>Freelance</option><option>Other</option></select></label><label>Method<select id="mMethod"><option>UPI</option><option>Cash</option><option>Debit Card</option><option>Credit Card</option><option>Bank Transfer</option></select></label><label>Date<input id="mDate" type="date" required></label><label class="full">Note<textarea id="mNote"></textarea></label><button class="primary full">Save Transaction</button></form></div></div>
+<div id="goalModal" class="modal"><div class="modal-box"><div class="modal-head"><h2>Create Savings Goal</h2><button onclick="closeModal('goalModal')">×</button></div><form id="goalForm" class="form-grid"><label>Goal name<input id="gName" required></label><label>Target amount<input id="gTarget" type="number" required></label><label>Current saved<input id="gCurrent" type="number" value="0"></label><label>Target date<input id="gDate" type="date" required></label><button class="primary full">Create Goal</button></form></div></div>
+<div id="budgetModal" class="modal"><div class="modal-box"><div class="modal-head"><h2>Set Category Budget</h2><button onclick="closeModal('budgetModal')">×</button></div><form id="budgetForm"><label>Category<select id="bCat"><option>Food</option><option>Rent</option><option>Transport</option><option>Education</option><option>Shopping</option><option>Entertainment</option><option>Healthcare</option><option>Utilities</option><option>Travel</option><option>Subscriptions</option><option>Other</option></select></label><label>Monthly limit<input id="bAmount" type="number" required></label><button class="primary full">Save Budget</button></form></div></div>
+<div id="moneyItemModal" class="modal"><div class="modal-box"><div class="modal-head"><h2 id="moneyItemTitle">Add Item</h2><button onclick="closeModal('moneyItemModal')">×</button></div><form id="moneyItemForm" class="form-grid"><label>Name<input id="miName" required></label><label>Amount<input id="miAmount" type="number" min="0" required></label><label>Date / Due<input id="miDate" type="date" required></label><label>Type<select id="miType"><option value="monthly">Monthly</option><option value="one-time">One-time</option></select></label><label class="full">Note<textarea id="miNote"></textarea></label><button class="primary full">Save</button></form></div></div>
+<div id="noticeModal" class="modal"><div class="modal-box"><div class="modal-head"><h2>New Announcement</h2><button onclick="closeModal('noticeModal')">×</button></div><form id="noticeForm" class="form-grid"><label class="full">Message<textarea id="noticeText" required></textarea></label><button class="primary full">Publish Notice</button></form></div></div>
+<div id="toast"><b id="toastTitle">Saved</b><span id="toastText"></span></div>
+<script src="app.js"></script>
+</body>
+</html>
